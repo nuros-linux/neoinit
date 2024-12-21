@@ -3,8 +3,7 @@
 <div align="center">
 
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL%203.0-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Build Status](https://github.com/nuros-linux/neoinit/actions/workflows/build.yml/badge.svg)](https://github.com/nuros-linux/neoinit/actions)
-[![CodeQL](https://github.com/nuros-linux/neoinit/actions/workflows/codeql.yml/badge.svg)](https://github.com/nuros-linux/neoinit/actions/workflows/codeql.yml)
+
 
 A modern, lightweight, and blazingly fast init system designed as a high-performance alternative to SystemD.
 
@@ -205,7 +204,7 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 ## Project Status
 
 Current Version: beta (Main Beta)
-Last Updated: 2024-12-21 06:46 UTC
+Last Updated: 2024-12-21 06:47 UTC
 Status: Active Development
 
 ---
