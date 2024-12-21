@@ -210,3 +210,8 @@ Status: Active Development
 ---
 
 Created by [AnmiTaliDev](https://github.com/AnmiTaliDev) and AnmiTali/NurOS Team with ❤️ for [Nuros Linux](https://github.com/nuros-linux)
+
+
+
+
+P.s. В строке таблице где и сколько он различается с SystemD это alpha версия и очень не стабильна по-этому ее не будем публиковать в GitHub она сломала мою VM.
