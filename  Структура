@@ -1,0 +1,55 @@
+neoinit/
+├── MAKEFILE
+├── LICENSE
+├── README.md
+├── docs/
+│   ├── API.md
+│   ├── CONTRIBUTING.md
+│   ├── INSTALLATION.md
+│   └── examples/
+│       └── service-configs/
+├── include/
+│   └── neoinit/
+│       ├── core.h
+│       ├── events.h
+│       ├── log.h
+│       ├── neoinit.h
+│       ├── resources.h
+│       ├── service.h
+│       └── socket.h
+├── scripts/
+│   ├── install.sh
+│   └── service-templates/
+├── src/
+│   ├── core/
+│   │   ├── context.c
+│   │   ├── init.c
+│   │   └── shutdown.c
+│   ├── events/
+│   │   ├── handler.c
+│   │   └── loop.c
+│   ├── log/
+│   │   └── logger.c
+│   ├── resources/
+│   │   ├── limits.c
+│   │   └── monitor.c
+│   ├── service/
+│   │   ├── control.c
+│   │   ├── dependency.c
+│   │   └── manager.c
+│   ├── socket/
+│   │   ├── activation.c
+│   │   └── control.c
+│   └── main.c
+├── tests/
+│   ├── CMakeLists.txt
+│   ├── integration/
+│   │   └── service_tests.c
+│   └── unit/
+│       ├── core_tests.c
+│       └── service_tests.c
+└── tools/
+    └── neoinit-ctl/
+        ├── CMakeLists.txt
+        └── src/
+            └── main.c

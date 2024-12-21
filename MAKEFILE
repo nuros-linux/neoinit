@@ -1,0 +1,159 @@
+# Compiler and flags
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror -O2 -pipe
+CPPFLAGS = -I./include
+LDFLAGS = -pthread
+DEBUG_FLAGS = -g -DDEBUG
+
+# Directories
+SRC_DIR = src
+INC_DIR = include
+OBJ_DIR = obj
+BIN_DIR = bin
+TEST_DIR = tests
+DOC_DIR = docs
+TOOLS_DIR = tools
+
+# Source files
+CORE_SRC = $(wildcard $(SRC_DIR)/core/*.c)
+EVENT_SRC = $(wildcard $(SRC_DIR)/events/*.c)
+LOG_SRC = $(wildcard $(SRC_DIR)/log/*.c)
+RESOURCE_SRC = $(wildcard $(SRC_DIR)/resources/*.c)
+SERVICE_SRC = $(wildcard $(SRC_DIR)/service/*.c)
+SOCKET_SRC = $(wildcard $(SRC_DIR)/socket/*.c)
+MAIN_SRC = $(SRC_DIR)/main.c
+
+# Object files
+CORE_OBJ = $(CORE_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+EVENT_OBJ = $(EVENT_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+LOG_OBJ = $(LOG_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+RESOURCE_OBJ = $(RESOURCE_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+SERVICE_OBJ = $(SERVICE_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+SOCKET_OBJ = $(SOCKET_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+MAIN_OBJ = $(MAIN_SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+
+# All objects
+OBJS = $(CORE_OBJ) $(EVENT_OBJ) $(LOG_OBJ) $(RESOURCE_OBJ) $(SERVICE_OBJ) $(SOCKET_OBJ) $(MAIN_OBJ)
+
+# Binary
+TARGET = $(BIN_DIR)/neoinit
+
+# Test files
+TEST_SRC = $(wildcard $(TEST_DIR)/*.c)
+TEST_OBJ = $(TEST_SRC:$(TEST_DIR)/%.c=$(OBJ_DIR)/test/%.o)
+TEST_BIN = $(BIN_DIR)/test_neoinit
+
+# Installation paths
+PREFIX = /usr
+BINDIR = $(PREFIX)/bin
+SYSCONFDIR = /etc
+SYSTEMD_UNIT_DIR = $(PREFIX)/lib/systemd/system
+
+# Default target
+.PHONY: all
+all: dirs $(TARGET)
+
+# Debug build
+.PHONY: debug
+debug: CFLAGS += $(DEBUG_FLAGS)
+debug: all
+
+# Create necessary directories
+.PHONY: dirs
+dirs:
+    @mkdir -p $(BIN_DIR)
+    @mkdir -p $(OBJ_DIR)/core
+    @mkdir -p $(OBJ_DIR)/events
+    @mkdir -p $(OBJ_DIR)/log
+    @mkdir -p $(OBJ_DIR)/resources
+    @mkdir -p $(OBJ_DIR)/service
+    @mkdir -p $(OBJ_DIR)/socket
+    @mkdir -p $(OBJ_DIR)/test
+
+# Compile source files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+    @mkdir -p $(@D)
+    $(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+
+# Link the target
+$(TARGET): $(OBJS)
+    $(CC) $(OBJS) -o $@ $(LDFLAGS)
+
+# Compile and run tests
+.PHONY: test
+test: dirs $(TEST_BIN)
+    ./$(TEST_BIN)
+
+$(TEST_BIN): $(filter-out $(MAIN_OBJ),$(OBJS)) $(TEST_OBJ)
+    $(CC) $^ -o $@ $(LDFLAGS)
+
+$(OBJ_DIR)/test/%.o: $(TEST_DIR)/%.c
+    @mkdir -p $(@D)
+    $(CC) $(CFLAGS) $(CPPFLAGS) -I$(TEST_DIR)/include -c $< -o $@
+
+# Install
+.PHONY: install
+install: all
+    install -d $(DESTDIR)$(BINDIR)
+    install -m 755 $(TARGET) $(DESTDIR)$(BINDIR)
+    install -d $(DESTDIR)$(SYSCONFDIR)/neoinit
+    install -d $(DESTDIR)$(SYSCONFDIR)/neoinit/services
+    install -d $(DESTDIR)$(SYSTEMD_UNIT_DIR)
+    install -m 644 init/neoinit.service $(DESTDIR)$(SYSTEMD_UNIT_DIR)
+
+# Uninstall
+.PHONY: uninstall
+uninstall:
+    rm -f $(DESTDIR)$(BINDIR)/neoinit
+    rm -f $(DESTDIR)$(SYSTEMD_UNIT_DIR)/neoinit.service
+    rm -rf $(DESTDIR)$(SYSCONFDIR)/neoinit
+
+# Clean build files
+.PHONY: clean
+clean:
+    rm -rf $(OBJ_DIR)
+    rm -rf $(BIN_DIR)
+
+# Generate documentation
+.PHONY: docs
+docs:
+    doxygen Doxyfile
+
+# Format code
+.PHONY: format
+format:
+    find $(SRC_DIR) $(INC_DIR) $(TEST_DIR) -name '*.[ch]' -exec clang-format -i {} +
+
+# Static analysis
+.PHONY: analyze
+analyze:
+    cppcheck --enable=all $(SRC_DIR) $(INC_DIR)
+    scan-build make
+
+# Package for distribution
+.PHONY: dist
+dist: clean
+    tar -czf neoinit-$(shell git describe --tags).tar.gz \
+        --transform 's,^,neoinit-$(shell git describe --tags)/,' \
+        *
+
+# Dependencies
+.PHONY: dep
+dep:
+    $(CC) -MM $(CPPFLAGS) $(wildcard $(SRC_DIR)/*/*.c) > Makefile.dep
+
+-include Makefile.dep
+
+.PHONY: help
+help:
+    @echo "Available targets:"
+    @echo "  all      - Build neoinit (default)"
+    @echo "  debug    - Build with debug symbols"
+    @echo "  test     - Build and run tests"
+    @echo "  install  - Install neoinit"
+    @echo "  clean    - Remove build files"
+    @echo "  format   - Format source code"
+    @echo "  analyze  - Run static analysis"
+    @echo "  docs     - Generate documentation"
+    @echo "  dist     - Create distribution package"
+    @echo "  help     - Show this help message"
