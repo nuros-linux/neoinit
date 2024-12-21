@@ -6,9 +6,7 @@ neoinit/
 │   ├── API.md
 │   ├── CONTRIBUTING.md
 │   ├── INSTALLATION.md
-│   └── examples/
-│       └── service-configs/
-├── include/
+├───include/
 │   └── neoinit/
 │       ├── core.h
 │       ├── events.h
