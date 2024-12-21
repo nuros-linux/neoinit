@@ -131,14 +131,6 @@ EnforceResourceLimits=true
 └─────────────────┘
 ```
 
-## Performance Comparison
-
-| Metric           | Neoinit | SystemD |
-|------------------|---------|---------|
-| Boot Time        | 2.5s    | 5.8s    |
-| Memory Usage     | 15MB    | 85MB    |
-| CPU Usage        | 0.5%    | 2.3%    |
-| Service Start    | 50ms    | 150ms   |
 
 ## API Reference
 
@@ -201,17 +193,6 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
 
-## Project Status
-
-Current Version: beta (Main Beta)
-Last Updated: 2024-12-21 06:47 UTC
-Status: Active Development
-
 ---
 
 Created by [AnmiTaliDev](https://github.com/AnmiTaliDev) and AnmiTali/NurOS Team with ❤️ for [Nuros Linux](https://github.com/nuros-linux)
-
-
-
-
-P.s. В строке таблице где и сколько он различается с SystemD это alpha версия и очень не стабильна по-этому ее не будем публиковать в GitHub она сломала мою VM.
